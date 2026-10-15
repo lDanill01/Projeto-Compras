@@ -19,6 +19,8 @@ function apiLogin(payload) {
   }
 
   const token = criarSessao(u);
+  /* Caso a conta administrativa ainda esteja com a senha padrão */
+  const trocarSenhaObrigatoria = ehAdmin(email) && String(u.senha_hash) === hashSenha(ADMIN_SENHA_PADRAO, u.salt);
   return {
     ok: true,
     data: {
@@ -27,6 +29,7 @@ function apiLogin(payload) {
       nome: nomeExibicao(email, u.nome_completo),
       grupo: String(u.grupo),
       expira_em: Date.now() + 8 * 60 * 60 * 1000,
+      troca_senha_obrigatoria: trocarSenhaObrigatoria,
     },
   };
 }
