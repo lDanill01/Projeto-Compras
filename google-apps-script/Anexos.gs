@@ -9,10 +9,16 @@ const TAMANHO_MAX_BYTES = 10 * 1024 * 1024;
 
 /* Próximo id de anexo (sequência em ScriptProperties) */
 function proximoIdAnexo() {
-  const props = PropertiesService.getScriptProperties();
-  const n = (parseInt(props.getProperty(CHAVE_ANEXO_ID), 10) || 0) + 1;
-  props.setProperty(CHAVE_ANEXO_ID, String(n));
-  return "ANX-" + ("000001" + n).slice(-6);
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const n = (parseInt(props.getProperty(CHAVE_ANEXO_ID), 10) || 0) + 1;
+    props.setProperty(CHAVE_ANEXO_ID, String(n));
+    return "ANX-" + ("000001" + n).slice(-6);
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 function _extensao(nome) {
