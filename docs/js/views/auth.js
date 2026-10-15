@@ -59,6 +59,9 @@
         Sessao.gravar(r.data);
         montarLayout();
         atualizarNav("#/home");
+        if (r.data.troca_senha_obrigatoria) {
+          mostrarMensagem("warning", "Sua senha é provisória. Altere-a em Configurações > Segurança.");
+        }
         location.hash = "#/home"; /* hashchange dispara o render */
       } else {
         btn.disabled = false;
