@@ -132,6 +132,17 @@ function apiSolicitarResetSenha(payload) {
   const email = String(payload.email || "").trim().toLowerCase();
   exigirEmailInstitucional(email);
 
+  /* Limpeza de tokens expirados/usados (best-effort). */
+  try {
+    const sh = abaOuCriar(ABA_RESET, CAB_RESET);
+    const linhas = sh.getDataRange().getValues();
+    for (let i = linhas.length - 1; i >= 1; i--) {
+      const expira = new Date(linhas[i][2]);
+      const usado = String(linhas[i][3]).toUpperCase() === "TRUE";
+      if (usado || expira.getTime() <= Date.now()) sh.deleteRow(i + 1);
+    }
+  } catch (e) { /* best-effort */ }
+
   /* Resposta sempre igual (não revela se o e-mail existe) */
   const respostaPadrao = {
     ok: true,
