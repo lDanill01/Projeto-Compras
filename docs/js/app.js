@@ -1,5 +1,4 @@
 /* app.js — bootstrap da aplicação. */
-
 async function iniciarApp() {
   const rota = rotaAtual();
   const s = Sessao.ler();
@@ -24,4 +23,16 @@ document.addEventListener(API.EV_SESSAO_EXPIRADA, (e) => {
   setTimeout(() => mostrarMensagem("error", e.detail || "Sessão expirada."), 50);
 });
 
-iniciarApp();
+/* Carrega config central (backend) para manter UI alinhada. Fallback local caso erre */
+(async function bootstrap() {
+  try {
+    const resp = await API.chamar("config", {}, "");
+    if (resp && resp.ok && resp.data) {
+      CONFIG.INSTITUTOS = resp.data.institutos || CONFIG.INSTITUTOS;
+      CONFIG.MODALIDADES = resp.data.modalidades || CONFIG.MODALIDADES;
+      CONFIG.URGENCIAS = resp.data.urgencias || CONFIG.URGENCIAS;
+      CONFIG.STATUS = resp.data.status || CONFIG.STATUS;
+    }
+  } catch (e) { /* best-effort */ }
+  await iniciarApp();
+})();
