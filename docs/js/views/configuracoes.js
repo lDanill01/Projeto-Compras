@@ -74,8 +74,10 @@ ROTAS["#/configuracoes"] = async function () {
         senha_nova2: val("cfg-senha-nova2"),
       });
       if (res.ok) {
-        mostrarMensagem("success", "Senha alterada com sucesso.");
+        mostrarMensagem("success", "Senha alterada com sucesso. Faça login novamente.");
         formSenha.reset();
+        Sessao.limpar();
+        setTimeout(() => (location.hash = "#/login"), 1200);
       } else {
         mostrarMensagem("error", res.erro || "Não foi possível alterar a senha.");
       }
