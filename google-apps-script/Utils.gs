@@ -238,12 +238,18 @@ function leadTimeDias(p) {
 }
 
 function proximoNumeroPedido() {
-  const nums = lerAba("Pedidos")
-    .map((p) => String(p.numero || ""))
-    .filter((n) => n.startsWith("REQ-"))
-    .map((n) => parseInt(n.slice(4), 10) || 0);
-  const prox = (nums.length ? Math.max.apply(null, nums) : 0) + 1;
-  return "REQ-" + ("000000" + prox).slice(-6);
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const nums = lerAba("Pedidos")
+      .map((p) => String(p.numero || ""))
+      .filter((n) => n.startsWith("REQ-"))
+      .map((n) => parseInt(n.slice(4), 10) || 0);
+    const prox = (nums.length ? Math.max.apply(null, nums) : 0) + 1;
+    return "REQ-" + ("000000" + prox).slice(-6);
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 /* --------------------------- validações --------------------------- */
