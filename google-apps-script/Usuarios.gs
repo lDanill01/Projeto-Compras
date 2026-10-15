@@ -168,6 +168,16 @@ function apiAlterarSenha(payload, usuario) {
   const sh = aba("Usuarios");
   sh.getRange(alvo.__linha__, 4).setValue(hashSenha(nova, salt));
   sh.getRange(alvo.__linha__, 5).setValue(salt);
+
+  /* Invalida sessões antigas deste usuário (mantém a atual). */
+  try {
+    lerAbaComLinha("Sessoes")
+      .filter((s) => String(s.email).toLowerCase() === String(usuario.email).toLowerCase() &&
+                      String(s.token) !== String(payload._token))
+      .reverse()
+      .forEach((s) => removerLinha("Sessoes", s.__linha__));
+  } catch (e) { /* best-effort */ }
+
   return { ok: true, data: { email: usuario.email } };
 }
 
