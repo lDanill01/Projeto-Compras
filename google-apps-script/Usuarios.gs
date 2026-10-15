@@ -149,6 +149,28 @@ function apiAlterarGrupoUsuario(payload, usuario) {
   return { ok: true, data: { email, grupo } };
 }
 
+/* Altera a senha do próprio usuário autenticado. */
+function apiAlterarSenha(payload, usuario) {
+  const senhaAtual = String(payload.senha_atual || "");
+  const nova = String(payload.senha_nova || "");
+  const nova2 = String(payload.senha_nova2 || "");
+  exigir(senhaAtual, "Informe a senha atual.");
+  exigir(nova.length >= 6, "A senha deve ter ao menos 6 caracteres.");
+  exigir(!nova2 || nova === nova2, "As senhas não coincidem.");
+
+  const alvo = buscarUsuarioPorLinha(usuario.email);
+  exigir(alvo, "Usuário não encontrado.");
+  if (hashSenha(senhaAtual, alvo.salt) !== String(alvo.senha_hash)) {
+    throw new Error("Senha atual inválida.");
+  }
+
+  const salt = Utilities.getUuid();
+  const sh = aba("Usuarios");
+  sh.getRange(alvo.__linha__, 4).setValue(hashSenha(nova, salt));
+  sh.getRange(alvo.__linha__, 5).setValue(salt);
+  return { ok: true, data: { email: usuario.email } };
+}
+
 /* índices: 1 = nome_completo ... 11 = ativo (excel 1-based) */
 const COLUNA_USUARIO_ATIVO = 11;
 

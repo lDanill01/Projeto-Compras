@@ -113,6 +113,7 @@ const ROTAS_API = {
   excluirUsuario: apiExcluirUsuario,
   criarUsuarioAdmin: apiCriarUsuarioAdmin,
   alterarGrupoUsuario: apiAlterarGrupoUsuario,
+  alterarSenha: apiAlterarSenha,
 
   /* Agregações (Performance.gs + Dashboard.gs) */
   dashboard: apiDashboard,
