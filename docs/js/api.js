@@ -67,6 +67,11 @@ const API = (() => {
       window.addEventListener("message", (ev) => {
         const m = ev.data;
         if (!m) return;
+        /* Apenas origens oficiais do Apps Script podem responder pela bridge */
+        if (ev.origin &&
+            !/^https:\/\/script\.google(com|usercontent)\.com$/i.test(ev.origin)) {
+          return;
+        }
 
         if (m.type === "BRIDGE_READY") {
           if (ev.source) fonte = ev.source; /* painel interno do HtmlService */
