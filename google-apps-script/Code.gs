@@ -119,6 +119,8 @@ const ROTAS_API = {
   dashboard: apiDashboard,
   performance: apiPerformance,
   listaResponsaveis: apiListaResponsaveis,
+  /* Config central (Config.gs) */
+  config: apiConfig,
 };
 
 /* Ações sem sessão */
@@ -127,4 +129,5 @@ const ROTA_PUBLICA = {
   cadastrarUsuario: true,
   solicitarResetSenha: true,
   redefinirSenha: true,
+  config: true,
 };
