@@ -8,6 +8,8 @@ function apiLogin(payload) {
   const senha = String(payload.senha || "");
   exigir(email && senha, "Informe e-mail e senha.");
 
+  limparSessoesExpiradas();
+
   const u = buscarUsuario(email);
   if (!u) return { ok: false, erro: "Credenciais inválidas." };
   if (!isValido(u)) return { ok: false, erro: "Usuário inativo. Fale com a Gestão." };
