@@ -43,9 +43,42 @@ ROTAS["#/configuracoes"] = async function () {
     </section>`;
   }
 
+  html += `
+    <section class="cartao-pedido" style="margin-top:1rem">
+      <h3><i class="bi bi-key"></i> Alterar senha</h3>
+      <p class="meta">Defina uma nova senha para sua conta.</p>
+      <form id="cfg-senha" class="formulario">
+        <p><label for="cfg-senha-atual">Senha atual</label>
+           <input id="cfg-senha-atual" type="password" class="campo" required></p>
+        <p><label for="cfg-senha-nova">Nova senha</label>
+           <input id="cfg-senha-nova" type="password" class="campo" required></p>
+        <p><label for="cfg-senha-nova2">Confirmar nova senha</label>
+           <input id="cfg-senha-nova2" type="password" class="campo" required></p>
+        <button type="submit" class="botao"><i class="bi bi-check-lg"></i> Alterar senha</button>
+      </form>
+    </section>`;
+
   html += `</div>`;
 
   qs("#cfg-conteudo").innerHTML = html;
   qs("#cfg-loading").hidden = true;
   qs("#cfg-conteudo").hidden = false;
+
+  const formSenha = qs("#cfg-senha");
+  if (formSenha) {
+    formSenha.addEventListener("submit", async (ev) => {
+      ev.preventDefault();
+      const res = await API.chamar("alterarSenha", {
+        senha_atual: val("cfg-senha-atual"),
+        senha_nova: val("cfg-senha-nova"),
+        senha_nova2: val("cfg-senha-nova2"),
+      });
+      if (res.ok) {
+        mostrarMensagem("success", "Senha alterada com sucesso.");
+        formSenha.reset();
+      } else {
+        mostrarMensagem("error", res.erro || "Não foi possível alterar a senha.");
+      }
+    });
+  }
 };
